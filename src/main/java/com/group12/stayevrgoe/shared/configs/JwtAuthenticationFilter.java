@@ -1,7 +1,10 @@
 package com.group12.stayevrgoe.shared.configs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group12.stayevrgoe.shared.http.ApiResponse;
 import com.group12.stayevrgoe.user.UserService;
 import com.group12.stayevrgoe.user.domain.MyUserDetails;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,13 +25,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             String jwt = bearerToken.substring(7);
-            if (jwtService.isTokenValid(jwt)) {
+            try {
                 String email = jwtService.extractEmail(jwt);
                 MyUserDetails user = (MyUserDetails) userService.loadUserByUsername(email);
 
@@ -38,8 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
-            } else {
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token expired");
+            } catch (JwtException e) {
+                response.setContentType("application/json");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write(
+                        objectMapper.writeValueAsString(
+                                new ApiResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage())));
                 return;
             }
         }

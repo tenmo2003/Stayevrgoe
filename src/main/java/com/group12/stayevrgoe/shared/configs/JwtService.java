@@ -4,18 +4,41 @@ import com.group12.stayevrgoe.shared.constants.JwtConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.system.SystemProperties;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.io.File;
+import java.nio.file.Files;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtService {
+    private SecretKey secretKey;
+
+    @PostConstruct
+    private void init() {
+        try {
+            File keyFile = new File(SystemProperties.get("user.dir") + File.separator + "certs" + File.separator + "secret.pem");
+            byte[] bytes = Files.readAllBytes(keyFile.toPath());
+            secretKey = Keys.hmacShaKeyFor(bytes);
+        } catch (Exception e) {
+            log.error("Error initializing JWT service: {}", e.getMessage());
+        }
+    }
+
 
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(JwtConstants.SECRET_KEY)
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
+                .parseSignedClaims(token)
                 .getPayload();
     }
 
@@ -27,13 +50,8 @@ public class JwtService {
                 .subject(email)
                 .issuedAt(currentDate)
                 .expiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, JwtConstants.SECRET_KEY)
+                .signWith(secretKey)
                 .compact();
-    }
-
-    public boolean isTokenValid(String token) {
-        Date currentDate = new Date();
-        return currentDate.before(extractClaims(token).getExpiration());
     }
 
     public String extractEmail(String token) {
