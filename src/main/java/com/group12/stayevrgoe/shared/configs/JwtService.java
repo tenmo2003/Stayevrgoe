@@ -1,9 +1,7 @@
 package com.group12.stayevrgoe.shared.configs;
 
-import com.group12.stayevrgoe.shared.constants.JwtConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +11,13 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.nio.file.Files;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
 @Component
 @Slf4j
 public class JwtService {
     private SecretKey secretKey;
+    private static final long JWT_TOKEN_TIME_TO_LIVE = (long) 1000 * 60 * 60 * 24 * 7;
 
     @PostConstruct
     private void init() {
@@ -44,7 +41,7 @@ public class JwtService {
 
     public String generateToken(String email) {
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + JwtConstants.JWT_TOKEN_VALIDITY);
+        Date expiryDate = new Date(currentDate.getTime() + JWT_TOKEN_TIME_TO_LIVE);
 
         return Jwts.builder()
                 .subject(email)
