@@ -22,17 +22,16 @@ public class RestConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(
-                        requests -> requests.requestMatchers("/api/authenticate").permitAll()
+        http.authorizeHttpRequests(requests ->
+                        requests.requestMatchers("/api/authenticate").permitAll()
                                 .requestMatchers("/api/users/admin").hasRole(User.Role.ADMIN.toString())
                                 .requestMatchers("/api/users/**").authenticated()
                                 .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(
-                        exception ->
-                                exception.authenticationEntryPoint(customAuthenticationEntryPoint)
-                                        .accessDeniedHandler(customAuthenticationEntryPoint))
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(customAuthenticationEntryPoint)
+                                .accessDeniedHandler(customAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
         ;
 

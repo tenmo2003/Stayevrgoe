@@ -1,9 +1,9 @@
-package com.group12.stayevrgoe.authentication;
+package com.group12.stayevrgoe.authentication.domain;
 
 import lombok.Data;
 
 @Data
-public class SignUpDTO {
+public class CredentialsDTO {
     private String email;
     private String password;
 }

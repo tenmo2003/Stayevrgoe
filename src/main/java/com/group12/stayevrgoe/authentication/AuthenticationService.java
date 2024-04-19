@@ -1,5 +1,7 @@
 package com.group12.stayevrgoe.authentication;
 
+import com.group12.stayevrgoe.authentication.domain.CredentialsDTO;
+import com.group12.stayevrgoe.authentication.domain.SignUpDTO;
 import com.group12.stayevrgoe.shared.configs.JwtService;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.user.UserDAO;
