@@ -8,6 +8,8 @@ import com.group12.stayevrgoe.user.UserDAO;
 import com.group12.stayevrgoe.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +18,21 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private final UserDAO userDAO;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
     public String authenticate(CredentialsDTO credentialsDTO) {
-        User user = userDAO.findByEmail(credentialsDTO.getEmail());
+        try {
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    credentialsDTO.getEmail(),
+                    credentialsDTO.getPassword()
+            );
+            authenticationManager.authenticate(token);
 
-        if (!bCryptPasswordEncoder.matches(credentialsDTO.getPassword(), user.getPassword())) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "Wrong password");
+            return jwtService.generateToken(credentialsDTO.getEmail());
+        } catch (Exception e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-
-        return jwtService.generateToken(user.getEmail());
     }
 
     public void signup(SignUpDTO dto) {
