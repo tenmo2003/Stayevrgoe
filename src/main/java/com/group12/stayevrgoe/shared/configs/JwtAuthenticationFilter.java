@@ -3,7 +3,7 @@ package com.group12.stayevrgoe.shared.configs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group12.stayevrgoe.shared.http.ApiResponse;
 import com.group12.stayevrgoe.user.UserService;
-import com.group12.stayevrgoe.user.domain.MyUserDetails;
+import com.group12.stayevrgoe.user.MyUserDetails;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

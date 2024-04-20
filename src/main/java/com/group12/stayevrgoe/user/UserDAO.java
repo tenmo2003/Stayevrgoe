@@ -3,7 +3,6 @@ package com.group12.stayevrgoe.user;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.group12.stayevrgoe.user.domain.User;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;

@@ -1,11 +1,9 @@
 package com.group12.stayevrgoe.authentication;
 
-import com.group12.stayevrgoe.authentication.domain.CredentialsDTO;
-import com.group12.stayevrgoe.authentication.domain.SignUpDTO;
 import com.group12.stayevrgoe.shared.configs.JwtService;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.user.UserDAO;
-import com.group12.stayevrgoe.user.domain.User;
+import com.group12.stayevrgoe.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

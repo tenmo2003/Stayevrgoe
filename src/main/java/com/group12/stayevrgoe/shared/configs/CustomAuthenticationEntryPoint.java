@@ -36,6 +36,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint,
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.getWriter().write(
                 objectMapper.writeValueAsString(
-                        new ApiResponse(HttpStatus.FORBIDDEN.value(), "Forbidden")));
+                        new ApiResponse(HttpStatus.FORBIDDEN.value(), "Access denied")));
     }
 }

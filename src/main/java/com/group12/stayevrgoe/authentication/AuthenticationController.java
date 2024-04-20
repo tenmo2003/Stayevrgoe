@@ -1,7 +1,5 @@
 package com.group12.stayevrgoe.authentication;
 
-import com.group12.stayevrgoe.authentication.domain.CredentialsDTO;
-import com.group12.stayevrgoe.authentication.domain.SignUpDTO;
 import com.group12.stayevrgoe.shared.http.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

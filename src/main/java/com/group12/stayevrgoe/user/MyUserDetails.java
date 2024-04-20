@@ -1,4 +1,4 @@
-package com.group12.stayevrgoe.user.domain;
+package com.group12.stayevrgoe.user;
 
 import lombok.Getter;
 import lombok.Setter;

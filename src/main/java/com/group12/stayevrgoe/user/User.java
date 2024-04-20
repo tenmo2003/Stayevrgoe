@@ -1,5 +1,6 @@
-package com.group12.stayevrgoe.user.domain;
+package com.group12.stayevrgoe.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -9,6 +10,7 @@ public class User {
     private String id;
 
     private String email;
+    @JsonIgnore
     private String password;
 
     private Role role;
