@@ -1,4 +1,4 @@
-package com.group12.stayevrgoe.shared.http;
+package com.group12.stayevrgoe.shared.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

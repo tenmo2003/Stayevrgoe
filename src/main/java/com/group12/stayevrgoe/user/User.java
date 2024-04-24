@@ -13,11 +13,5 @@ public class User {
     @JsonIgnore
     private String password;
 
-    private Role role;
-
-    public enum Role {
-        USER, HOTEL_MANAGER, ADMIN
-    }
-
-
+    private UserRole role;
 }

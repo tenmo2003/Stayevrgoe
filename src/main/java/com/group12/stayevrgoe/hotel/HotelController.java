@@ -1,10 +1,9 @@
-package com.group12.stayevrgoe.user;
+package com.group12.stayevrgoe.hotel;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
-
+public class HotelController {
 }

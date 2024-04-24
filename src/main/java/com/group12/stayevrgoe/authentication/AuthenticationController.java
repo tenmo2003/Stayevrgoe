@@ -1,6 +1,6 @@
 package com.group12.stayevrgoe.authentication;
 
-import com.group12.stayevrgoe.shared.http.ApiResponse;
+import com.group12.stayevrgoe.shared.network.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;

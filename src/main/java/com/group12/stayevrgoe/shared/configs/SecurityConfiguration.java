@@ -1,5 +1,6 @@
 package com.group12.stayevrgoe.shared.configs;
 
+import com.group12.stayevrgoe.user.UserRole;
 import com.group12.stayevrgoe.user.UserService;
 import com.group12.stayevrgoe.user.User;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @RequiredArgsConstructor
-public class RestConfiguration {
+public class SecurityConfiguration {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
@@ -34,7 +35,7 @@ public class RestConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests ->
                         requests.requestMatchers("/api/authenticate").permitAll()
-                                .requestMatchers("/api/users/admin").hasRole(User.Role.ADMIN.toString())
+                                .requestMatchers("/api/users/admin").hasRole(UserRole.ADMIN.toString())
                                 .requestMatchers("/api/users/**").authenticated()
                                 .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())

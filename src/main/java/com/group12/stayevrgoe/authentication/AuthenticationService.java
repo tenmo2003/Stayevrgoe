@@ -4,6 +4,7 @@ import com.group12.stayevrgoe.shared.configs.JwtService;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.user.UserDAO;
 import com.group12.stayevrgoe.user.User;
+import com.group12.stayevrgoe.user.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,7 @@ public class AuthenticationService {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
-        user.setRole(User.Role.USER);
+        user.setRole(UserRole.USER);
         userDAO.save(user);
     }
 }

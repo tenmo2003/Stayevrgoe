@@ -1,7 +1,7 @@
 package com.group12.stayevrgoe.shared.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.group12.stayevrgoe.shared.http.ApiResponse;
+import com.group12.stayevrgoe.shared.network.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

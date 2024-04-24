@@ -2,7 +2,7 @@ package com.group12.stayevrgoe.shared.configs;
 
 
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
-import com.group12.stayevrgoe.shared.http.ApiResponse;
+import com.group12.stayevrgoe.shared.network.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
