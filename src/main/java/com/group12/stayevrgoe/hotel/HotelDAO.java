@@ -28,7 +28,6 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
                             .regex(String.format("^%s", filter.getLocation()), "i")
             );
         }
-
         if (StringUtils.hasText(filter.getName())) {
             // make a search query with some regexp
             query.addCriteria(
@@ -36,6 +35,7 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
                             .regex(String.format("^%s", filter.getName()), "i")
             );
         }
+
 
         return mongoTemplate.find(query, Hotel.class);
     }

@@ -4,11 +4,13 @@ import lombok.Data;
 
 import java.util.EnumSet;
 
+/**
+ * @author anhvn
+ */
 @Data
-public class HotelFilter {
-    private String name;
-    private String location;
+public class HotelRoomFilter {
+    private String hotelId;
+    private EnumSet<HotelRoomFacility> facilities;
     private float minPrice;
     private float maxPrice;
-    private EnumSet<HotelFacility> facilities;
 }
