@@ -6,6 +6,8 @@ import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,6 +20,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author anhvn
@@ -50,7 +54,7 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
             });
 
     @Override
-    public List<HotelRoom> get(HotelRoomFilter filter) {
+    public List<HotelRoom> get(HotelRoomFilter filter, Pageable pageable) {
         Query query = new Query();
         query.addCriteria(Criteria.where("hotelId").is(filter.getHotelId()));
         if (CollectionUtils.isEmpty(filter.getFacilities())) {
@@ -58,17 +62,21 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
         }
         query.addCriteria(Criteria.where("priceInUSD").gte(filter.getMinPrice()).lte(filter.getMaxPrice()));
 
+        query.with(pageable);
+        query.with(Sort.by(Sort.Direction.DESC, "_id"));
+
         List<HotelRoom> rooms = mongoTemplate.find(query, HotelRoom.class);
 
         cacheByHotelId.putAll(rooms.stream()
-                .collect(java.util.stream.Collectors.groupingBy(
-                        HotelRoom::getHotelId,
-                        java.util.stream.Collectors.toList()
+                .collect(Collectors.groupingBy(
+                                HotelRoom::getHotelId,
+                                Collectors.toList()
                         )
                 ));
+
         cacheById.putAll(rooms.stream()
-                .collect(java.util.stream.Collectors.toMap(
-                        HotelRoom::getId, java.util.function.Function.identity())
+                .collect(Collectors.toMap(
+                        HotelRoom::getId, Function.identity())
                 ));
         return rooms;
     }

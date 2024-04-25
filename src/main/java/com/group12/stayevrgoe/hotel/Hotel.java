@@ -15,5 +15,6 @@ public class Hotel {
     private String location;
     private String description;
     private EnumSet<HotelFacility> facilities;
-    private float startPriceInUSD;
+    private float minPriceInUSD;
+    private float maxPriceInUSD;
 }
