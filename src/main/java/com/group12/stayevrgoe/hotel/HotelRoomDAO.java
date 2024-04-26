@@ -54,6 +54,15 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
             });
 
     @Override
+    public HotelRoom getByUniqueAttribute(String id) {
+        try {
+            return cacheById.get(id);
+        } catch (ExecutionException e) {
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
+        }
+    }
+
+    @Override
     public List<HotelRoom> get(HotelRoomFilter filter, Pageable pageable) {
         Query query = new Query();
         query.addCriteria(Criteria.where("hotelId").is(filter.getHotelId()));
