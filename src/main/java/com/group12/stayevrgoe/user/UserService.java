@@ -16,13 +16,13 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.findByEmail(username);
+        User user = userDAO.getByUniqueAttribute(username);
 
         return new MyUserDetails(username, user.getPassword(), new ArrayList<>(), user);
     }
 
     public User findUserByEmail(String email) {
-        return userDAO.findByEmail(email);
+        return userDAO.getByUniqueAttribute(email);
     }
 
     public User getCurrentUser() {

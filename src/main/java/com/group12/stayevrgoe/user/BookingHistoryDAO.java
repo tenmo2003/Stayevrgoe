@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,7 +49,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
         }
 
 
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
