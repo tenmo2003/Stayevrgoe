@@ -3,6 +3,7 @@ package com.group12.stayevrgoe.hotel;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import com.group12.stayevrgoe.user.BookingHistory;
+import com.group12.stayevrgoe.user.BookingHistoryDAO;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.Interval;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.List;
 public class HotelService {
     private final HotelDAO hotelDAO;
     private final HotelRoomDAO hotelRoomDAO;
+    private final BookingHistoryDAO bookingHistoryDAO;
 
     public List<Hotel> getHotels(HotelFilter filter, Pageable pageable) {
         return hotelDAO.get(filter, pageable);
@@ -34,16 +36,22 @@ public class HotelService {
         bookingHistory.setHotelRoomId(hotelRoom.getHotelId());
         bookingHistory.setFrom(dto.getFrom());
         bookingHistory.setTo(dto.getTo());
-        hotelRoom.getTakenIntervals().add(new Interval(dto.getFrom().getTime(), dto.getTo().getTime()));
-        hotelRoomDAO.save(hotelRoom);
 
+        bookingHistory = bookingHistoryDAO.save(bookingHistory);
+        hotelRoom.getCurrentBookings().add(
+                HotelRoomBooking.builder()
+                        .bookHistoryId(bookingHistory.getId())
+                        .interval(new Interval(dto.getFrom().getTime(), dto.getTo().getTime()))
+                        .build());
+        hotelRoomDAO.save(hotelRoom);
         return bookingHistory;
     }
 
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
-        for (Interval takenInterval : room.getTakenIntervals()) {
-            if (requestedInterval.overlaps(takenInterval)) {
+        for (HotelRoomBooking booking : room.getCurrentBookings()) {
+            Interval bookingInterval = booking.getInterval();
+            if (requestedInterval.overlaps(bookingInterval)) {
                 return false;
             }
         }

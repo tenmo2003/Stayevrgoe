@@ -54,6 +54,8 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
     @Override
     public BookingHistory save(BookingHistory bookingHistory) {
-        return null;
+        BookingHistory saved = mongoTemplate.save(bookingHistory);
+        cacheByUserEmail.invalidate(bookingHistory.getUserEmail());
+        return saved;
     }
 }
