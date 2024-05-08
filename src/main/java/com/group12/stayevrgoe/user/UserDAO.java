@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.AsyncService;
+import com.group12.stayevrgoe.shared.utils.BackgroundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDAO implements DAO<User, UserFilter> {
     private final MongoTemplate mongoTemplate;
-    private final AsyncService asyncService;
+    private final BackgroundService backgroundService;
     LoadingCache<String, User> userCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
@@ -68,7 +68,7 @@ public class UserDAO implements DAO<User, UserFilter> {
 
         List<User> users = mongoTemplate.find(query, User.class);
 
-        asyncService.runAsync(() ->
+        backgroundService.executeTask(() ->
                 userCache.putAll(users.stream()
                         .collect(Collectors.toMap(User::getEmail, Function.identity()))));
 
@@ -78,7 +78,7 @@ public class UserDAO implements DAO<User, UserFilter> {
     @Override
     public User save(User k) {
         User user = mongoTemplate.save(k);
-        userCache.put(user.getEmail(), user);
+        backgroundService.executeTask(() -> userCache.put(user.getEmail(), user));
         return user;
     }
 }

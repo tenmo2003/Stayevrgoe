@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author anhvn
  */
 @Component
-public class AsyncService {
+public class BackgroundService {
     private final ThreadPoolExecutor executor =
             new ThreadPoolExecutor(
                     1,
@@ -17,7 +17,7 @@ public class AsyncService {
                     java.util.concurrent.TimeUnit.MILLISECONDS,
                     new java.util.concurrent.LinkedBlockingQueue<>());
 
-    public void runAsync(Runnable runnable) {
+    public void executeTask(Runnable runnable) {
         executor.execute(runnable);
     }
 }

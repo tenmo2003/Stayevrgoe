@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.AsyncService;
+import com.group12.stayevrgoe.shared.utils.BackgroundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HotelDAO implements DAO<Hotel, HotelFilter> {
     private final MongoTemplate mongoTemplate;
-    private final AsyncService asyncService;
+    private final BackgroundService backgroundService;
     private final LoadingCache<String, Hotel> hotelCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
@@ -74,7 +74,7 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
 
         List<Hotel> hotels = mongoTemplate.find(query, Hotel.class);
 
-        asyncService.runAsync(() ->
+        backgroundService.executeTask(() ->
                 hotelCache.putAll(hotels.stream()
                 .collect(Collectors.toMap(Hotel::getId, Function.identity()))));
 

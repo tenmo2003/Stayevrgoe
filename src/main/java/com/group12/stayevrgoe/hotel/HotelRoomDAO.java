@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
+import com.group12.stayevrgoe.shared.utils.BackgroundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -30,8 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
     private final MongoTemplate mongoTemplate;
+    private final BackgroundService backgroundService;
 
-    private LoadingCache<String, HotelRoom> cacheById = CacheBuilder.newBuilder()
+    private final LoadingCache<String, HotelRoom> cacheById = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
             .maximumSize(1000)
             .build(new CacheLoader<>() {
@@ -41,7 +41,7 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
                 }
             });
 
-    private LoadingCache<String, List<HotelRoom>> cacheByHotelId = CacheBuilder.newBuilder()
+    private final LoadingCache<String, List<HotelRoom>> cacheByHotelId = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
             .maximumSize(200)
             .build(new CacheLoader<>() {
@@ -76,29 +76,33 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
 
         List<HotelRoom> rooms = mongoTemplate.find(query, HotelRoom.class);
 
-        cacheByHotelId.putAll(rooms.stream()
-                .collect(Collectors.groupingBy(
-                                HotelRoom::getHotelId,
-                                Collectors.toList()
-                        )
-                ));
+        backgroundService.executeTask(() -> {
+            cacheByHotelId.putAll(rooms.stream()
+                    .collect(Collectors.groupingBy(
+                                    HotelRoom::getHotelId,
+                                    Collectors.toList()
+                            )
+                    ));
 
-        cacheById.putAll(rooms.stream()
-                .collect(Collectors.toMap(
-                        HotelRoom::getId, Function.identity())
-                ));
+            cacheById.putAll(rooms.stream()
+                    .collect(Collectors.toMap(
+                            HotelRoom::getId, Function.identity())
+                    ));
+        });
         return rooms;
     }
 
     @Override
     public HotelRoom save(HotelRoom hotelRoom) {
-        try {
-            HotelRoom room = mongoTemplate.save(hotelRoom);
+        HotelRoom room = mongoTemplate.save(hotelRoom);
+        backgroundService.executeTask(() -> {
             cacheById.put(room.getId(), room);
-            cacheByHotelId.get(hotelRoom.getHotelId()).add(room);
-            return room;
-        } catch (Exception e) {
-            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
-        }
+            try {
+                cacheByHotelId.get(hotelRoom.getHotelId()).add(room);
+            } catch (Exception e) {
+                throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
+            }
+        });
+        return room;
     }
 }
