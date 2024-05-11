@@ -47,6 +47,21 @@ public class HotelService {
         return bookingHistory;
     }
 
+    public void cancelBooking(String bookingId) {
+        BookingHistory bookingHistory = bookingHistoryDAO.getByUniqueAttribute(bookingId);
+
+        HotelRoom hotelRoom = hotelRoomDAO.getByUniqueAttribute(bookingHistory.getHotelRoomId());
+        for (int i = 0; i < hotelRoom.getCurrentBookings().size(); i++) {
+            if (hotelRoom.getCurrentBookings().get(i).getBookHistoryId().equals(bookingId)) {
+                hotelRoom.getCurrentBookings().remove(i);
+                break;
+            }
+        }
+        hotelRoomDAO.save(hotelRoom);
+
+        bookingHistoryDAO.delete(bookingId);
+    }
+
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
         for (HotelRoomBooking booking : room.getCurrentBookings()) {

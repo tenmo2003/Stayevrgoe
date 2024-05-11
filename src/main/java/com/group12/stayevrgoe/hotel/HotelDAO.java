@@ -85,4 +85,10 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
     public Hotel save(Hotel hotel) {
         return mongoTemplate.save(hotel);
     }
+
+    @Override
+    public void delete(String id) {
+        mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), Hotel.class);
+    }
+
 }

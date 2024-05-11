@@ -8,4 +8,5 @@ public interface DAO<K, V> {
     K getByUniqueAttribute(String attr);
     List<K> get(V filter, Pageable pageable);
     K save(K k);
+    void delete(String id);
 }

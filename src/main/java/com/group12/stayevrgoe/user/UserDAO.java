@@ -81,4 +81,9 @@ public class UserDAO implements DAO<User, UserFilter> {
         backgroundService.executeTask(() -> userCache.put(user.getEmail(), user));
         return user;
     }
+
+    @Override
+    public void delete(String id) {
+        mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), User.class);
+    }
 }

@@ -3,6 +3,7 @@ package com.group12.stayevrgoe.user;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
 import com.group12.stayevrgoe.shared.utils.BackgroundService;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,18 +29,6 @@ import java.util.stream.Collectors;
 public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilter> {
     private final MongoTemplate mongoTemplate;
     private final BackgroundService backgroundService;
-    private final LoadingCache<String, List<BookingHistory>> cacheByUserEmail = CacheBuilder.newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .maximumSize(100)
-            .build(new CacheLoader<>() {
-                @Override
-                public List<BookingHistory> load(String userId) throws Exception {
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userId").is(userId));
-                    return mongoTemplate.find(query, BookingHistory.class);
-                }
-            });
-
     private final LoadingCache<String, BookingHistory> cacheById = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
             .maximumSize(200)
@@ -52,7 +42,11 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
     @Override
     public BookingHistory getByUniqueAttribute(String id) {
-        return null;
+        try {
+            return cacheById.get(id);
+        } catch (ExecutionException e) {
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
+        }
     }
 
     @Override
@@ -68,27 +62,24 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
         List<BookingHistory> bookingHistories = mongoTemplate.find(query, BookingHistory.class);
 
-        backgroundService.executeTask(() -> {
-            cacheByUserEmail.putAll(bookingHistories.stream()
-                    .collect(Collectors.groupingBy(
-                                    BookingHistory::getUserEmail,
-                                    Collectors.toList()
-                            )
-                    ));
+        backgroundService.executeTask(() ->
+                cacheById.putAll(bookingHistories.stream()
+                        .collect(Collectors.toMap(
+                                BookingHistory::getId, Function.identity()
+                        ))));
 
-            cacheById.putAll(bookingHistories.stream()
-                    .collect(Collectors.toMap(
-                            BookingHistory::getId, Function.identity()
-                    )));
-        });
-
-        return Collections.emptyList();
+        return bookingHistories;
     }
 
     @Override
     public BookingHistory save(BookingHistory bookingHistory) {
         BookingHistory saved = mongoTemplate.save(bookingHistory);
-        cacheByUserEmail.invalidate(bookingHistory.getUserEmail());
+        backgroundService.executeTask(() -> cacheById.put(saved.getId(), saved));
         return saved;
+    }
+
+    @Override
+    public void delete(String id) {
+        mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), BookingHistory.class);
     }
 }

@@ -41,18 +41,6 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
                 }
             });
 
-    private final LoadingCache<String, List<HotelRoom>> cacheByHotelId = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.HOURS)
-            .maximumSize(200)
-            .build(new CacheLoader<>() {
-                @Override
-                public List<HotelRoom> load(String hotelId) throws Exception {
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("hotelId").is(hotelId));
-                    return mongoTemplate.find(query, HotelRoom.class);
-                }
-            });
-
     @Override
     public HotelRoom getByUniqueAttribute(String id) {
         try {
@@ -76,33 +64,24 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
 
         List<HotelRoom> rooms = mongoTemplate.find(query, HotelRoom.class);
 
-        backgroundService.executeTask(() -> {
-            cacheByHotelId.putAll(rooms.stream()
-                    .collect(Collectors.groupingBy(
-                                    HotelRoom::getHotelId,
-                                    Collectors.toList()
-                            )
-                    ));
-
-            cacheById.putAll(rooms.stream()
-                    .collect(Collectors.toMap(
-                            HotelRoom::getId, Function.identity())
-                    ));
-        });
+        backgroundService.executeTask(() ->
+                cacheById.putAll(
+                        rooms.stream()
+                                .collect(Collectors.toMap(
+                                        HotelRoom::getId, Function.identity())
+                                )));
         return rooms;
     }
 
     @Override
     public HotelRoom save(HotelRoom hotelRoom) {
         HotelRoom room = mongoTemplate.save(hotelRoom);
-        backgroundService.executeTask(() -> {
-            cacheById.put(room.getId(), room);
-            try {
-                cacheByHotelId.get(hotelRoom.getHotelId()).add(room);
-            } catch (Exception e) {
-                throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
-            }
-        });
+        backgroundService.executeTask(() -> cacheById.put(room.getId(), room));
         return room;
+    }
+
+    @Override
+    public void delete(String id) {
+        mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), HotelRoom.class);
     }
 }
