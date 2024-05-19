@@ -3,6 +3,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/
       database: stayevrgoe
+      auto-index-creation: true
   output:
     ansi:
       enabled: ALWAYS
