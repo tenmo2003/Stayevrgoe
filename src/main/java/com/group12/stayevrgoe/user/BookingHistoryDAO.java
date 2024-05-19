@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundService;
+import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilter> {
     private final MongoTemplate mongoTemplate;
-    private final BackgroundService backgroundService;
     private final LoadingCache<String, BookingHistory> cacheById = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
             .maximumSize(200)
@@ -62,7 +61,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
         List<BookingHistory> bookingHistories = mongoTemplate.find(query, BookingHistory.class);
 
-        backgroundService.executeTask(() ->
+        BackgroundUtils.executeTask(() ->
                 cacheById.putAll(bookingHistories.stream()
                         .collect(Collectors.toMap(
                                 BookingHistory::getId, Function.identity()
@@ -74,7 +73,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
     @Override
     public BookingHistory save(BookingHistory bookingHistory) {
         BookingHistory saved = mongoTemplate.save(bookingHistory);
-        backgroundService.executeTask(() -> cacheById.put(saved.getId(), saved));
+        BackgroundUtils.executeTask(() -> cacheById.put(saved.getId(), saved));
         return saved;
     }
 
