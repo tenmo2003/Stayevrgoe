@@ -22,11 +22,12 @@ public class JwtService {
     @PostConstruct
     private void init() {
         try {
-            String secretKeyFilePathname = SystemProperties.get("user.dir")
-                    + File.separator
-                    + "certs"
-                    + File.separator
-                    + "secret.pem";
+            String secretKeyFilePathname =
+                    SystemProperties.get("user.dir")
+                            + File.separator
+                            + "certs"
+                            + File.separator
+                            + "secret.pem";
             File keyFile = new File(secretKeyFilePathname);
             byte[] bytes = Files.readAllBytes(keyFile.toPath());
             secretKey = Keys.hmacShaKeyFor(bytes);

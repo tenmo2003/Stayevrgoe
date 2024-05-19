@@ -1,7 +1,6 @@
 package com.group12.stayevrgoe.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,10 +22,5 @@ public class UserService implements UserDetailsService {
 
     public User findUserByEmail(String email) {
         return userDAO.getByUniqueAttribute(email);
-    }
-
-    public User getCurrentUser() {
-        MyUserDetails myUserDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return myUserDetails.getUser();
     }
 }
