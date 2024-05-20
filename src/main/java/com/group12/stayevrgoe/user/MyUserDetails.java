@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MyUserDetails extends org.springframework.security.core.userdetails.User {
-    private User user;
+    private transient User user;
 
     public MyUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, User user) {
         super(username, password, authorities);
