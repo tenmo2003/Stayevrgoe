@@ -10,12 +10,12 @@ import java.util.Date;
  * @author anhvn
  */
 @Data
-@Document(collection = "booking_histories")
+@Document("booking_histories")
 public class BookingHistory {
     @Id
     private String id;
 
-    private String userEmail;
+    private String userId;
     private Date from;
     private Date to;
     private String hotelId;

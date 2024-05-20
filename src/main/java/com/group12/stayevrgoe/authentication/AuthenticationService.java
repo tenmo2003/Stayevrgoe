@@ -2,6 +2,7 @@ package com.group12.stayevrgoe.authentication;
 
 import com.group12.stayevrgoe.shared.configs.JwtService;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
+import com.group12.stayevrgoe.user.MyUserDetails;
 import com.group12.stayevrgoe.user.UserDAO;
 import com.group12.stayevrgoe.user.User;
 import com.group12.stayevrgoe.user.UserRole;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +28,12 @@ public class AuthenticationService {
                     credentialsDTO.getEmail(),
                     credentialsDTO.getPassword()
             );
-            authenticationManager.authenticate(token);
+            Authentication authentication = authenticationManager.authenticate(token);
+            MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
 
-            return jwtService.generateToken(credentialsDTO.getEmail());
+            User user = myUserDetails.getUser();
+
+            return jwtService.generateToken(user.getId());
         } catch (Exception e) {
             throw new BusinessException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }

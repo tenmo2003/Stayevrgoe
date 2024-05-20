@@ -13,7 +13,7 @@ public class Message {
     @Id
     private String id;
 
-    private String senderEmail;
+    private String senderId;
     private String chatId;
     private MessageType type = MessageType.TEXT;
     private String content;
