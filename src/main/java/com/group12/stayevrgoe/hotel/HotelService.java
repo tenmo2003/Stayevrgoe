@@ -31,7 +31,7 @@ public class HotelService {
         }
 
         BookingHistory bookingHistory = new BookingHistory();
-        bookingHistory.setUserEmail(AuthenticationUtils.getCurrentUser().getEmail());
+        bookingHistory.setUserId(AuthenticationUtils.getCurrentUser().getId());
         bookingHistory.setHotelId(hotelRoom.getHotelId());
         bookingHistory.setHotelRoomId(hotelRoom.getHotelId());
         bookingHistory.setFrom(dto.getFrom());

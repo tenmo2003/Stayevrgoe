@@ -26,4 +26,11 @@ public class MessagingController {
 
         return new ApiResponse(HttpStatus.OK, "OK", messagingService.getMessages(messageFilter, pageable));
     }
+
+    @GetMapping("/chats")
+    public ApiResponse getChats(@RequestParam(name="page") int pageNumber,
+                               @RequestParam(name="size") int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return new ApiResponse(HttpStatus.OK, "OK", messagingService.getChats(pageable));
+    }
 }
