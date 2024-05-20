@@ -62,6 +62,10 @@ public class HotelService {
         bookingHistoryDAO.delete(bookingId);
     }
 
+    public List<HotelRoom> getHotelRooms(HotelRoomFilter filter, Pageable pageable) {
+        return hotelRoomDAO.get(filter, pageable);
+    }
+
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
         for (HotelRoomBooking booking : room.getCurrentBookings()) {
