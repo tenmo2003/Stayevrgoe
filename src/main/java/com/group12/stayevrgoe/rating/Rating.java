@@ -19,6 +19,8 @@ public class Rating {
     private int value;
     private String comment;
 
+    private RatingResponse hotelResponse;
+
     @CreatedDate
     private Date createdDate;
 }
