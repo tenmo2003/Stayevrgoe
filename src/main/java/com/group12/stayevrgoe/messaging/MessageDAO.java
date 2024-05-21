@@ -31,7 +31,11 @@ public class MessageDAO implements DAO<Message, MessageFilter> {
             .build(new CacheLoader<>() {
                 @Override
                 public Message load(String id) throws Exception {
-                    return mongoTemplate.findById(id, Message.class);
+                    Message message = mongoTemplate.findById(id, Message.class);
+                    if (message == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "Message not found");
+                    }
+                    return message;
                 }
             });
 

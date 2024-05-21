@@ -36,7 +36,11 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
             .build(new CacheLoader<>() {
                 @Override
                 public HotelRoom load(String id) throws Exception {
-                    return mongoTemplate.findById(id, HotelRoom.class);
+                    HotelRoom room = mongoTemplate.findById(id, HotelRoom.class);
+                    if (room == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "Room not found");
+                    }
+                    return room;
                 }
             });
 

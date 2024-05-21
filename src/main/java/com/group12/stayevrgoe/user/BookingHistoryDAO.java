@@ -34,7 +34,11 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
             .build(new CacheLoader<>() {
                 @Override
                 public BookingHistory load(String id) throws Exception {
-                    return mongoTemplate.findById(id, BookingHistory.class);
+                    BookingHistory bookingHistory = mongoTemplate.findById(id, BookingHistory.class);
+                    if (bookingHistory == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "Booking history not found");
+                    }
+                    return null;
                 }
             });
 

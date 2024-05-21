@@ -30,7 +30,11 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
             .build(new CacheLoader<>() {
                 @Override
                 public Hotel load(String id) throws Exception {
-                    return mongoTemplate.findById(id, Hotel.class);
+                    Hotel hotel = mongoTemplate.findById(id, Hotel.class);
+                    if (hotel == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "Hotel not found");
+                    }
+                    return hotel;
                 }
             });
 

@@ -33,7 +33,11 @@ public class RatingDAO implements DAO<Rating, RatingFilter> {
                     new CacheLoader<String, Rating>() {
                         @Override
                         public Rating load(String key) throws Exception {
-                            return mongoTemplate.findOne(Query.query(Criteria.where("_id").is(key)), Rating.class);
+                            Rating rating = mongoTemplate.findById(key, Rating.class);
+                            if (rating == null) {
+                                throw new BusinessException(HttpStatus.NOT_FOUND, "Rating not found");
+                            }
+                            return rating;
                         }
                     }
             );
