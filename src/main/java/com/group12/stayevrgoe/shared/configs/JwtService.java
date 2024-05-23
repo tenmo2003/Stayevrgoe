@@ -1,11 +1,11 @@
 package com.group12.stayevrgoe.shared.configs;
 
+import com.group12.stayevrgoe.shared.utils.FileUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.system.SystemProperties;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -23,7 +23,7 @@ public class JwtService {
     private void init() {
         try {
             String secretKeyFilePathname =
-                    SystemProperties.get("user.dir")
+                    FileUtils.getProjectRootDirectory()
                             + File.separator
                             + "certs"
                             + File.separator
