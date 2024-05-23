@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -57,7 +57,7 @@ public class MessageDAO implements DAO<Message, MessageFilter> {
         query.with(Sort.by(Sort.Direction.DESC, "_id"));
         List<Message> messages = mongoTemplate.find(query, Message.class);
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 messageCache.putAll(
                         messages.stream().collect(Collectors.toMap(Message::getId, Function.identity()))
                 )

@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -67,7 +67,7 @@ public class UserDAO implements DAO<User, UserFilter> {
 
         List<User> users = mongoTemplate.find(query, User.class);
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 userCache.putAll(users.stream()
                         .collect(Collectors.toMap(User::getEmail, Function.identity()))));
 
@@ -77,7 +77,7 @@ public class UserDAO implements DAO<User, UserFilter> {
     @Override
     public User save(User k) {
         User user = mongoTemplate.save(k);
-        BackgroundUtils.executeTask(() -> userCache.put(user.getEmail(), user));
+        ThreadPoolUtils.executeTask(() -> userCache.put(user.getEmail(), user));
         return user;
     }
 

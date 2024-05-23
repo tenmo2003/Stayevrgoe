@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -67,7 +67,7 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
 
         List<HotelRoom> rooms = mongoTemplate.find(query, HotelRoom.class);
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 cacheById.putAll(
                         rooms.stream()
                                 .collect(Collectors.toMap(
@@ -79,7 +79,7 @@ public class HotelRoomDAO implements DAO<HotelRoom, HotelRoomFilter> {
     @Override
     public HotelRoom save(HotelRoom hotelRoom) {
         HotelRoom room = mongoTemplate.save(hotelRoom);
-        BackgroundUtils.executeTask(() -> cacheById.put(room.getId(), room));
+        ThreadPoolUtils.executeTask(() -> cacheById.put(room.getId(), room));
         return room;
     }
 

@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -77,7 +77,7 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
 
         List<Hotel> hotels = mongoTemplate.find(query, Hotel.class);
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 hotelCache.putAll(hotels.stream()
                 .collect(Collectors.toMap(Hotel::getId, Function.identity()))));
 

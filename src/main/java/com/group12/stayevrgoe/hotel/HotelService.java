@@ -66,6 +66,10 @@ public class HotelService {
         return hotelRoomDAO.get(filter, pageable);
     }
 
+    public Hotel registerNewHotel(HotelRegisterDTO hotel) {
+        return null;
+    }
+
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
         for (HotelRoomBooking booking : room.getCurrentBookings()) {

@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,7 +65,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
         List<BookingHistory> bookingHistories = mongoTemplate.find(query, BookingHistory.class);
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 cacheById.putAll(bookingHistories.stream()
                         .collect(Collectors.toMap(
                                 BookingHistory::getId, Function.identity()
@@ -77,7 +77,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
     @Override
     public BookingHistory save(BookingHistory bookingHistory) {
         BookingHistory saved = mongoTemplate.save(bookingHistory);
-        BackgroundUtils.executeTask(() -> cacheById.put(saved.getId(), saved));
+        ThreadPoolUtils.executeTask(() -> cacheById.put(saved.getId(), saved));
         return saved;
     }
 

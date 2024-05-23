@@ -2,9 +2,8 @@ package com.group12.stayevrgoe.messaging;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
-import com.group12.stayevrgoe.shared.utils.BackgroundUtils;
+import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,12 +11,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -67,7 +64,7 @@ public class ChatDAO implements DAO<RichChatDTO, ChatFilter> {
                 mongoTemplate.aggregate(aggregation, "chats", RichChatDTO.class)
                         .getMappedResults();
 
-        BackgroundUtils.executeTask(() ->
+        ThreadPoolUtils.executeTask(() ->
                 richChatCache.putAll(results.stream().collect(Collectors.toMap(RichChatDTO::getId, Function.identity()))));
 
         return results;
