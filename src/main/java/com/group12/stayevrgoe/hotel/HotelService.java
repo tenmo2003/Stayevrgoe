@@ -2,14 +2,17 @@ package com.group12.stayevrgoe.hotel;
 
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
+import com.group12.stayevrgoe.shared.utils.ImgurUtils;
 import com.group12.stayevrgoe.user.BookingHistory;
 import com.group12.stayevrgoe.user.BookingHistoryDAO;
+import com.group12.stayevrgoe.user.User;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.Interval;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,10 +69,68 @@ public class HotelService {
         return hotelRoomDAO.get(filter, pageable);
     }
 
-    public Hotel registerNewHotel(HotelRegisterDTO hotel) {
-        return null;
+    public void registerNewHotel(HotelRegisterDTO dto) {
+        User user = AuthenticationUtils.getCurrentUser();
+
+        Hotel newHotel = Hotel.builder()
+                .name(dto.getName())
+                .location(dto.getLocation())
+                .description(dto.getDescription())
+                .imagesURLs(ImgurUtils.uploadMultipleImages(dto.getImages()))
+                .facilities(dto.getFacilities())
+                .listed(false)
+                .registrantId(user.getId())
+                .build();
+
+        newHotel = hotelDAO.save(newHotel);
+        user.setWorkingHotelId(newHotel.getId());
     }
 
+    public void approveHotel(String id) {
+        Hotel hotel = hotelDAO.getByUniqueAttribute(id);
+        hotel.setListed(true);
+        hotelDAO.save(hotel);
+    }
+
+    public void deleteHotel(String id) {
+        hotelDAO.delete(id);
+    }
+
+    public HotelRoom addNewHotelRoom(HotelRoomAddDTO dto) {
+        HotelRoom room = HotelRoom.builder()
+                .hotelId(dto.getHotelId())
+                .description(dto.getDescription())
+                .facilities(dto.getFacilities())
+                .currentBookings(new ArrayList<>())
+                .priceInUSD(dto.getPriceInUSD())
+                .imagesURLs(ImgurUtils.uploadMultipleImages(dto.getImages()))
+                .build();
+
+        updateHotelPriceRange(dto.getHotelId(), dto.getPriceInUSD());
+
+        return hotelRoomDAO.save(room);
+    }
+
+    public void editHotelRoomInfo(HotelRoomEditDTO dto) {
+        HotelRoom room = hotelRoomDAO.getByUniqueAttribute(dto.getId());
+        room.setDescription(dto.getDescription());
+        room.setFacilities(dto.getFacilities());
+        room.setPriceInUSD(dto.getPriceInUSD());
+        hotelRoomDAO.save(room);
+
+        updateHotelPriceRange(room.getHotelId(), dto.getPriceInUSD());
+    }
+
+    public void deleteHotelRoom(String id) {
+        hotelRoomDAO.delete(id);
+    }
+
+    private void updateHotelPriceRange(String hotelId, float price) {
+        Hotel hotel = hotelDAO.getByUniqueAttribute(hotelId);
+        hotel.setMinPriceInUSD(Math.min(hotel.getMinPriceInUSD(), price));
+        hotel.setMaxPriceInUSD(Math.max(hotel.getMaxPriceInUSD(), price));
+        hotelDAO.save(hotel);
+    }
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
         for (HotelRoomBooking booking : room.getCurrentBookings()) {
@@ -80,4 +141,5 @@ public class HotelService {
         }
         return true;
     }
+
 }

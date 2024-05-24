@@ -10,10 +10,10 @@ import java.util.List;
  * @author anhvn
  */
 @Data
-public class HotelRegisterDTO {
-    private String name;
-    private String location;
+public class HotelRoomAddDTO {
+    private String hotelId;
     private String description;
     private List<MultipartFile> images;
-    private EnumSet<HotelFacility> facilities;
+    private EnumSet<HotelRoomFacility> facilities;
+    private float priceInUSD;
 }

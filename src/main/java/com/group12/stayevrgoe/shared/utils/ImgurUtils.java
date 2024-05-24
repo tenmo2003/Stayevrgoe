@@ -58,6 +58,7 @@ public class ImgurUtils {
 
         ImgurResponse response = restTemplate.postForObject(Constants.IMGUR_UPLOAD_IMAGE_URL, requestEntity, ImgurResponse.class);
         if (response == null) {
+            log.error("Failed to upload image");
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload image");
         }
         return response.getData().getLink();

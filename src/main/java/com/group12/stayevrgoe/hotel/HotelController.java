@@ -34,6 +34,11 @@ public class HotelController {
     public ApiResponse bookHotelRoom(@RequestBody HotelRoomBookDTO dto) {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.bookHotelRoom(dto));
     }
+    @DeleteMapping("/hotel/book")
+    public ApiResponse cancelBooking(@RequestParam String bookingId) {
+        hotelService.cancelBooking(bookingId);
+        return new ApiResponse(HttpStatus.OK, "Cancelled successfully");
+    }
 
     @GetMapping("/hotel/rooms")
     public ApiResponse getHotelRooms(@RequestParam String hotelId,
@@ -47,4 +52,45 @@ public class HotelController {
 
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelRooms(filter, pageable));
     }
+
+    @PostMapping("/hotel/room")
+    public ApiResponse addHotelRoom(@ModelAttribute HotelRoomAddDTO dto) {
+        return new ApiResponse(HttpStatus.OK, "Registered successfully", hotelService.addNewHotelRoom(dto));
+    }
+
+    @PostMapping("/hotel/register")
+    public ApiResponse registerNewHotel(@ModelAttribute HotelRegisterDTO dto) {
+        hotelService.registerNewHotel(dto);
+        return new ApiResponse(HttpStatus.OK, "Registered successfully");
+    }
+
+    @PatchMapping("/hotel/approve")
+    public ApiResponse approveHotel(@RequestParam String id) {
+        hotelService.approveHotel(id);
+        return new ApiResponse(HttpStatus.OK, "Approved successfully");
+    }
+
+    @DeleteMapping("/hotel")
+    public ApiResponse deleteHotel(@RequestParam String id) {
+        hotelService.deleteHotel(id);
+        return new ApiResponse(HttpStatus.OK, "Deleted successfully");
+    }
+
+    @PostMapping("/hotel/room")
+    public ApiResponse editHotelRoomInfo(@RequestBody HotelRoomAddDTO dto) {
+        return new ApiResponse(HttpStatus.OK, "Updated successfully", hotelService.addNewHotelRoom(dto));
+    }
+
+    @PatchMapping("/hotel/room")
+    public ApiResponse updateHotelPriceRange(@RequestBody HotelRoomEditDTO dto) {
+        hotelService.editHotelRoomInfo(dto);
+        return new ApiResponse(HttpStatus.OK, "Updated successfully");
+    }
+
+    @DeleteMapping("/hotel/room")
+    public ApiResponse deleteHotelRoom(@RequestParam String roomId) {
+        hotelService.deleteHotelRoom(roomId);
+        return new ApiResponse(HttpStatus.OK, "Deleted successfully");
+    }
+
 }
