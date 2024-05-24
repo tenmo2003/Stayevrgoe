@@ -22,8 +22,8 @@ public class HotelController {
                                  @RequestParam float minPrice,
                                  @RequestParam float maxPrice,
                                  @RequestParam(required = false) Set<HotelFacility> facilities,
-                                 @RequestParam(name="page") int pageNumber,
-                                 @RequestParam(name="limit") int pageSize) {
+                                 @RequestParam(name = "page") int pageNumber,
+                                 @RequestParam(name = "limit") int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         HotelFilter filter = new HotelFilter(name, location, minPrice, maxPrice, (EnumSet<HotelFacility>) facilities);
 
@@ -34,6 +34,7 @@ public class HotelController {
     public ApiResponse bookHotelRoom(@RequestBody HotelRoomBookDTO dto) {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.bookHotelRoom(dto));
     }
+
     @DeleteMapping("/hotel/book")
     public ApiResponse cancelBooking(@RequestParam String bookingId) {
         hotelService.cancelBooking(bookingId);
@@ -45,17 +46,12 @@ public class HotelController {
                                      @RequestParam float minPrice,
                                      @RequestParam float maxPrice,
                                      @RequestParam(required = false) Set<HotelRoomFacility> facilities,
-                                     @RequestParam(name="page") int pageNumber,
-                                     @RequestParam(name="limit") int pageSize) {
+                                     @RequestParam(name = "page") int pageNumber,
+                                     @RequestParam(name = "limit") int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         HotelRoomFilter filter = new HotelRoomFilter(hotelId, (EnumSet<HotelRoomFacility>) facilities, minPrice, maxPrice);
 
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelRooms(filter, pageable));
-    }
-
-    @PostMapping("/hotel/room")
-    public ApiResponse addHotelRoom(@ModelAttribute HotelRoomAddDTO dto) {
-        return new ApiResponse(HttpStatus.OK, "Registered successfully", hotelService.addNewHotelRoom(dto));
     }
 
     @PostMapping("/hotel/register")
