@@ -43,7 +43,7 @@ public class AuthenticationService {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
-        user.setRole(UserRole.USER);
+        user.setRole(dto.getRole());
         userDAO.save(user);
     }
 }
