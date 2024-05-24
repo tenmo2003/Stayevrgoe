@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class BookingHistoryFilter {
-    private String userEmail;
+    private String userId;
     private String hotelRoomId;
     private Date from;
     private Date to;

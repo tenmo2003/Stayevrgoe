@@ -8,7 +8,9 @@ import com.group12.stayevrgoe.shared.interfaces.DAO;
 import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -55,13 +57,12 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
     @Override
     public List<BookingHistory> get(BookingHistoryFilter filter, Pageable pageable) {
         Query query = new Query();
-        if (StringUtils.hasText(filter.getUserEmail())) {
-            query.addCriteria(Criteria.where("userEmail").is(filter.getUserEmail()));
+        if (StringUtils.hasText(filter.getUserId())) {
+            query.addCriteria(Criteria.where("userId").is(filter.getUserId()));
         }
         if (StringUtils.hasText(filter.getHotelRoomId())) {
             query.addCriteria(Criteria.where("hotelRoomId").is(filter.getHotelRoomId()));
         }
-        // TODO: Check for necessity of from and to fields in filter
 
         List<BookingHistory> bookingHistories = mongoTemplate.find(query, BookingHistory.class);
 
@@ -84,5 +85,35 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
     @Override
     public void delete(String id) {
         mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), BookingHistory.class);
+    }
+
+    public List<RichBookingHistoryDTO> getRichBookingHistories(BookingHistoryFilter filter, Pageable pageable) {
+        Criteria criteria = new Criteria();
+        if (StringUtils.hasText(filter.getUserId())) {
+            criteria.and("userId").is(filter.getUserId());
+        }
+        if (StringUtils.hasText(filter.getHotelRoomId())) {
+            criteria.and("hotelRoomId").is(filter.getHotelRoomId());
+        }
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, "_id")),
+                Aggregation.skip(pageable.getOffset()),
+                Aggregation.limit(pageable.getPageSize()),
+                Aggregation.lookup("hotels", "hotelId", "_id", "hotel"),
+                Aggregation.lookup("users", "customerId", "_id", "customer"),
+                Aggregation.lookup("hotelRooms", "hotelRoomId", "_id", "hotelRoom")
+        );
+
+        List<RichBookingHistoryDTO> results =
+                mongoTemplate.aggregate(aggregation, "bookingHistories", RichBookingHistoryDTO.class)
+                        .getMappedResults();
+
+        ThreadPoolUtils.executeTask(() ->
+                cacheById.putAll(results.stream()
+                        .collect(Collectors.toMap(RichBookingHistoryDTO::getId, RichBookingHistoryDTO::toBookingHistory))));
+
+        return results;
     }
 }
