@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.EnumSet;
 import java.util.List;
 
-@Document("hotel_rooms")
 @Data
 @Builder
+@Document("hotel_rooms")
 public class HotelRoom {
     @Id
     private String id;

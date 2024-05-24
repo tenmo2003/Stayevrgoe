@@ -10,11 +10,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.EnumSet;
 import java.util.List;
 
-@Document("hotels")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Document("hotels")
 public class Hotel {
     @Id
     private String id;

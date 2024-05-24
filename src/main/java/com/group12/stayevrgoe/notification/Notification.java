@@ -1,5 +1,6 @@
-package com.group12.stayevrgoe.messaging;
+package com.group12.stayevrgoe.notification;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -7,17 +8,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
+/**
+ * @author anhvn
+ */
 @Data
-@Document("messages")
-public class Message {
+@Document("notifications")
+@Builder
+public class Notification {
     @Id
     private String id;
 
-    private String senderId;
-    private String chatId;
-    private MessageType type = MessageType.TEXT;
+    private NotificationType type;
+    // link to userId or hotelId
+    private String sentTo;
+    private String header;
     private String content;
-
     @CreatedDate
     private Date sentAt;
 }

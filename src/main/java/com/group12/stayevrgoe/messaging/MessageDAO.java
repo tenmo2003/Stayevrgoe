@@ -40,9 +40,9 @@ public class MessageDAO implements DAO<Message, MessageFilter> {
             });
 
     @Override
-    public Message getByUniqueAttribute(String attr) {
+    public Message getByUniqueAttribute(String id) {
         try {
-            return messageCache.get(attr);
+            return messageCache.get(id);
         } catch (ExecutionException e) {
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
         }

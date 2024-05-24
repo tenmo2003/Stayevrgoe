@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document("ratings")
 @Data
+@Document("ratings")
 public class Rating {
     @Id
     private String id;
