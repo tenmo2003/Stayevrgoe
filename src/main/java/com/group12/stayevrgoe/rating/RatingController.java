@@ -34,6 +34,11 @@ public class RatingController {
         return new ApiResponse(HttpStatus.OK, "Ratings retrieved", ratingService.get(filter, pageable));
     }
 
+    @PostMapping("/rating")
+    public ApiResponse createRating(@RequestBody NewRatingDTO dto) {
+        return new ApiResponse(HttpStatus.OK, "Rating created", ratingService.addNewRating(dto));
+    }
+
     @PostMapping("/response")
     public ApiResponse respond(@RequestBody RespondDTO dto) {
         return new ApiResponse(HttpStatus.OK, "Rating responded", ratingService.respond(dto));

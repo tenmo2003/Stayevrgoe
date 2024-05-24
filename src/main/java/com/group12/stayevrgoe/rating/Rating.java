@@ -1,5 +1,6 @@
 package com.group12.stayevrgoe.rating;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -9,6 +10,7 @@ import java.util.Date;
 
 @Data
 @Document("ratings")
+@Builder
 public class Rating {
     @Id
     private String id;

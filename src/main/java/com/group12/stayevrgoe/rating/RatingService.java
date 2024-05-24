@@ -1,5 +1,6 @@
 package com.group12.stayevrgoe.rating;
 
+import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,15 @@ public class RatingService {
 
     public List<Rating> get(RatingFilter filter, Pageable pageable) {
         return ratingDAO.get(filter, pageable);
+    }
+
+    public Rating addNewRating(NewRatingDTO dto) {
+        return ratingDAO.save(Rating.builder()
+                .hotelRoomId(dto.getHotelRoomId())
+                .userId(AuthenticationUtils.getCurrentUser().getId())
+                .value(dto.getValue())
+                .comment(dto.getComment())
+                .build());
     }
 
     public Rating respond(RespondDTO dto) {
