@@ -16,6 +16,8 @@ public class HotelRoom {
     private String id;
     private String hotelId;
     private String description;
+    private int capacity;
+    private float area;
     private List<String> imagesURLs;
     private EnumSet<HotelRoomFacility> facilities;
     private float priceInUSD;

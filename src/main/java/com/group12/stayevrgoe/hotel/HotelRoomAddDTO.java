@@ -16,4 +16,6 @@ public class HotelRoomAddDTO {
     private List<MultipartFile> images;
     private EnumSet<HotelRoomFacility> facilities;
     private float priceInUSD;
+    private int capacity;
+    private float area;
 }

@@ -101,6 +101,8 @@ public class HotelService {
                 .hotelId(dto.getHotelId())
                 .description(dto.getDescription())
                 .facilities(dto.getFacilities())
+                .capacity(dto.getCapacity())
+                .area(dto.getArea())
                 .currentBookings(new ArrayList<>())
                 .priceInUSD(dto.getPriceInUSD())
                 .imagesURLs(ImgurUtils.uploadMultipleImages(dto.getImages()))
