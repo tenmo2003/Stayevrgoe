@@ -16,8 +16,8 @@ import java.util.List;
 public class RatingService {
     private final RatingDAO ratingDAO;
 
-    public List<Rating> get(RatingFilter filter, Pageable pageable) {
-        return ratingDAO.get(filter, pageable);
+    public List<RichRatingDTO> get(RatingFilter filter, Pageable pageable) {
+        return ratingDAO.getRichRatings(filter, pageable);
     }
 
     public Rating addNewRating(NewRatingDTO dto) {

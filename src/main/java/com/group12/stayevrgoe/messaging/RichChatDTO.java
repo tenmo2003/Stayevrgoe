@@ -13,4 +13,13 @@ public class RichChatDTO {
     private User customer;
     private Hotel hotel;
     private Message lastMessage;
+
+    public Chat convertToChat() {
+        Chat chat = new Chat();
+        chat.setId(id);
+        chat.setCustomerId(customer.getId());
+        chat.setHotelId(hotel.getId());
+        chat.setLastMessageId(lastMessage.getId());
+        return chat;
+    }
 }

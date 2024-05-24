@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author anhvn
@@ -100,5 +102,45 @@ public class RatingDAO implements DAO<Rating, RatingFilter> {
     public void delete(String id) {
         ratingCache.invalidate(id);
         mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), Rating.class);
+    }
+
+    public List<RichRatingDTO> getRichRatings(RatingFilter filter, Pageable pageable) {
+        Criteria criteria = new Criteria();
+
+        if (StringUtils.hasText(filter.getHotelRoomId())) {
+            criteria.and("hotelRoomId").is(filter.getHotelRoomId());
+        }
+        if (StringUtils.hasText(filter.getUserId())) {
+            criteria.and("userId").is(filter.getUserId());
+        }
+        if (filter.getValue() != -1) {
+            criteria.and("value").is(filter.getValue());
+        }
+        if (filter.getFrom() != null) {
+            criteria.and("createdDate").gte(filter.getFrom());
+        }
+        if (filter.getTo() != null) {
+            criteria.and("createdDate").lte(filter.getTo());
+        }
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdDate")),
+                Aggregation.skip(pageable.getOffset()),
+                Aggregation.limit(pageable.getPageSize()),
+                Aggregation.lookup("users", "userId", "_id", "user"),
+                Aggregation.lookup("hotelRooms", "hotelRoomId", "_id", "hotelRoom")
+        );
+
+        List<RichRatingDTO> results =
+                mongoTemplate.aggregate(aggregation, "ratings", RichRatingDTO.class)
+                        .getMappedResults();
+
+        ThreadPoolUtils.executeTask(() ->
+                ratingCache.putAll(results.stream()
+                        .collect(Collectors.toMap(RichRatingDTO::getId, RichRatingDTO::convertToRating))));
+
+
+        return results;
     }
 }

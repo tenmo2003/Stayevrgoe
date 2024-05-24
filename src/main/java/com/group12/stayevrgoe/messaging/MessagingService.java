@@ -26,8 +26,8 @@ public class MessagingService {
 
         message = messageDAO.save(message);
 
-        RichChatDTO chat = chatDAO.getByUniqueAttribute(dto.getChatId());
-        chat.setLastMessage(message);
+        Chat chat = chatDAO.getByUniqueAttribute(dto.getChatId());
+        chat.setLastMessageId(message.getId());
 
         chatDAO.save(chat);
 
@@ -50,6 +50,6 @@ public class MessagingService {
             chatFilter.setHotelId(currentUser.getId());
         }
 
-        return chatDAO.get(chatFilter, pageable);
+        return chatDAO.getRichChats(chatFilter, pageable);
     }
 }
