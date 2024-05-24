@@ -33,8 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             String jwt = bearerToken.substring(7);
             try {
-                String email = jwtService.extractEmail(jwt);
-                MyUserDetails user = (MyUserDetails) userService.loadUserByUsername(email);
+                String id = jwtService.extractEmail(jwt);
+                MyUserDetails user = (MyUserDetails) userService.loadUserById(id);
 
                 if (user != null) {
                     UsernamePasswordAuthenticationToken authenticationToken =

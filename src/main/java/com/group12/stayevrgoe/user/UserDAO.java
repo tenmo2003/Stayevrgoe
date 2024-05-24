@@ -28,8 +28,8 @@ public class UserDAO implements DAO<User, UserFilter> {
     LoadingCache<String, User> userCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
-                public User load(String email) throws Exception {
-                    User user = mongoTemplate.findOne(Query.query(Criteria.where("email").is(email)), User.class);
+                public User load(String id) throws Exception {
+                    User user = mongoTemplate.findOne(Query.query(Criteria.where("_id").is(id)), User.class);
                     if (user == null) {
                         throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
                     }
@@ -38,9 +38,9 @@ public class UserDAO implements DAO<User, UserFilter> {
             });
 
     @Override
-    public User getByUniqueAttribute(String email) {
+    public User getByUniqueAttribute(String id) {
         try {
-            return userCache.get(email);
+            return userCache.get(id);
         } catch (ExecutionException e) {
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR");
         }
@@ -84,5 +84,9 @@ public class UserDAO implements DAO<User, UserFilter> {
     @Override
     public void delete(String id) {
         mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), User.class);
+    }
+
+    public User getByEmail(String email) {
+        return mongoTemplate.findOne(Query.query(Criteria.where("email").is(email)), User.class);
     }
 }

@@ -15,12 +15,21 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.getByUniqueAttribute(username);
+        User user = userDAO.getByEmail(username);
 
         return new MyUserDetails(username, user.getPassword(), new ArrayList<>(), user);
     }
 
-    public User findUserByEmail(String email) {
-        return userDAO.getByUniqueAttribute(email);
+    public User getUserByEmail(String email) {
+        return userDAO.getByEmail(email);
+    }
+
+    public User getUserById(String id) {
+        return userDAO.getByUniqueAttribute(id);
+    }
+
+    public UserDetails loadUserById(String id) throws UsernameNotFoundException {
+        User user = userDAO.getByUniqueAttribute(id);
+        return new MyUserDetails(id, user.getPassword(), new ArrayList<>(), user);
     }
 }
