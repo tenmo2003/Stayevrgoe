@@ -17,6 +17,9 @@ public class User {
     @JsonIgnore
     private String password;
 
+    private String fullName;
+    private String phoneNumber;
+
     private UserRole role;
     private String workingHotelId;
 }
