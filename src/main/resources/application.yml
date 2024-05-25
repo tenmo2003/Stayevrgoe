@@ -3,7 +3,8 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/
+#      uri: mongodb://localhost:27017/
+      uri: mongodb+srv://21020309:QiFZLO9y3kYOSUuz@memusy.r1j7oeh.mongodb.net/?retryWrites=true&w=majority&appName=memusy
       database: stayevrgoe
       auto-index-creation: true
   output:
