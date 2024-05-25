@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./target/stayevrgoe-0.0.1-SNAPSHOT.jar /app
 
-COPY ./certs /app
+COPY ./certs /app/certs
 
 ENTRYPOINT ["java", "-jar", "stayevrgoe-0.0.1-SNAPSHOT.jar"]
 
