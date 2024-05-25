@@ -75,7 +75,7 @@ public class HotelController {
     }
 
     @PostMapping("/hotel/room")
-    public ApiResponse editHotelRoomInfo(@RequestBody HotelRoomAddDTO dto) {
+    public ApiResponse editHotelRoomInfo(@ModelAttribute HotelRoomAddDTO dto) {
         return new ApiResponse(HttpStatus.OK, "Updated successfully", hotelService.addNewHotelRoom(dto));
     }
 
