@@ -81,6 +81,8 @@ public class HotelService {
                 .facilities(dto.getFacilities())
                 .listed(false)
                 .registrantId(user.getId())
+                .ratingCount(0)
+                .totalRating(0)
                 .build();
 
         newHotel = hotelDAO.save(newHotel);
@@ -107,6 +109,8 @@ public class HotelService {
                 .currentBookings(new ArrayList<>())
                 .priceInUSD(dto.getPriceInUSD())
                 .imagesURLs(ImgurUtils.uploadMultipleImages(dto.getImages()))
+                .totalRating(0)
+                .ratingCount(0)
                 .build();
 
         updateHotelPriceRange(dto.getHotelId(), dto.getPriceInUSD());
