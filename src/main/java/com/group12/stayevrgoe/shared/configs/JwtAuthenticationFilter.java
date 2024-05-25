@@ -2,8 +2,8 @@ package com.group12.stayevrgoe.shared.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group12.stayevrgoe.shared.network.ApiResponse;
-import com.group12.stayevrgoe.user.UserService;
-import com.group12.stayevrgoe.user.MyUserDetails;
+import com.group12.stayevrgoe.user.control.UserService;
+import com.group12.stayevrgoe.user.entity.MyUserDetails;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

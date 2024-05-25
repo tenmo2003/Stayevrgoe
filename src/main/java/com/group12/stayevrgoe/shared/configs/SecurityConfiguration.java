@@ -1,7 +1,7 @@
 package com.group12.stayevrgoe.shared.configs;
 
-import com.group12.stayevrgoe.user.UserRole;
-import com.group12.stayevrgoe.user.UserService;
+import com.group12.stayevrgoe.user.entity.UserRole;
+import com.group12.stayevrgoe.user.control.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

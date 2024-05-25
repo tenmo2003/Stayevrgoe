@@ -1,7 +1,7 @@
 package com.group12.stayevrgoe.shared.utils;
 
-import com.group12.stayevrgoe.user.MyUserDetails;
-import com.group12.stayevrgoe.user.User;
+import com.group12.stayevrgoe.user.entity.MyUserDetails;
+import com.group12.stayevrgoe.user.entity.User;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.context.SecurityContextHolder;
 
