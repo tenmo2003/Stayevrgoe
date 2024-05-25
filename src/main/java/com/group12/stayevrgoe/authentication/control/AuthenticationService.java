@@ -45,6 +45,8 @@ public class AuthenticationService {
         user.setEmail(dto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
+        user.setFullName(dto.getFullName());
+        user.setPhoneNumber(dto.getPhoneNumber());
         userDAO.save(user);
     }
 }
