@@ -32,6 +32,11 @@ public class HotelController {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotels(filter, pageable));
     }
 
+    @GetMapping("/hotels/{id}")
+    public ApiResponse getHotel(@PathVariable String id) {
+        return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelById(id));
+    }
+
     @PostMapping("/hotel/book")
     public ApiResponse bookHotelRoom(@RequestBody HotelRoomBookDTO dto) {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.bookHotelRoom(dto));
@@ -43,18 +48,6 @@ public class HotelController {
         return new ApiResponse(HttpStatus.OK, "Cancelled successfully");
     }
 
-    @GetMapping("/hotel/rooms")
-    public ApiResponse getHotelRooms(@RequestParam String hotelId,
-                                     @RequestParam float minPrice,
-                                     @RequestParam float maxPrice,
-                                     @RequestParam(required = false) Set<HotelRoomFacility> facilities,
-                                     @RequestParam(name = "page") int pageNumber,
-                                     @RequestParam(name = "limit") int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        HotelRoomFilter filter = new HotelRoomFilter(hotelId, (EnumSet<HotelRoomFacility>) facilities, minPrice, maxPrice);
-
-        return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelRooms(filter, pageable));
-    }
 
     @PostMapping("/hotel/register")
     public ApiResponse registerNewHotel(@ModelAttribute HotelRegisterDTO dto) {
@@ -72,6 +65,24 @@ public class HotelController {
     public ApiResponse deleteHotel(@RequestParam String id) {
         hotelService.deleteHotel(id);
         return new ApiResponse(HttpStatus.OK, "Deleted successfully");
+    }
+
+    @GetMapping("/hotels/{hotelId}/rooms")
+    public ApiResponse getHotelRooms(@PathVariable String hotelId,
+                                     @RequestParam float minPrice,
+                                     @RequestParam float maxPrice,
+                                     @RequestParam(required = false) Set<HotelRoomFacility> facilities,
+                                     @RequestParam(name = "page") int pageNumber,
+                                     @RequestParam(name = "limit") int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        HotelRoomFilter filter = new HotelRoomFilter(hotelId, (EnumSet<HotelRoomFacility>) facilities, minPrice, maxPrice);
+
+        return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelRooms(filter, pageable));
+    }
+
+    @GetMapping("/hotels/rooms/{id}")
+    public ApiResponse getHotelRoom(@PathVariable String id) {
+        return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelRoomById(id));
     }
 
     @PostMapping("/hotel/room")

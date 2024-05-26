@@ -49,7 +49,7 @@ public class BookingHistoryDAO implements DAO<BookingHistory, BookingHistoryFilt
 
 
     @Override
-    public BookingHistory getByUniqueAttribute(String id) {
+    public BookingHistory getById(String id) {
         try {
             return cacheById.get(id);
         } catch (ExecutionException e) {

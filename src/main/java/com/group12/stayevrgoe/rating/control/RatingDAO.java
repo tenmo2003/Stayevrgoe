@@ -48,7 +48,7 @@ public class RatingDAO implements DAO<Rating, RatingFilter> {
             );
 
     @Override
-    public Rating getByUniqueAttribute(String id) {
+    public Rating getById(String id) {
         try {
             return ratingCache.get(id);
         } catch (ExecutionException e) {

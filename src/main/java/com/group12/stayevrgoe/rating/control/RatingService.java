@@ -37,13 +37,13 @@ public class RatingService {
                 .build());
 
         ThreadPoolUtils.executeTask(() -> {
-            HotelRoom hotelRoom = hotelRoomDAO.getByUniqueAttribute(dto.getHotelRoomId());
+            HotelRoom hotelRoom = hotelRoomDAO.getById(dto.getHotelRoomId());
             hotelRoom.setRatingCount(hotelRoom.getRatingCount() + 1);
             hotelRoom.setTotalRating(hotelRoom.getTotalRating() + dto.getValue());
 
             hotelRoomDAO.save(hotelRoom);
 
-            Hotel hotel = hotelDAO.getByUniqueAttribute(hotelRoom.getHotelId());
+            Hotel hotel = hotelDAO.getById(hotelRoom.getHotelId());
             hotel.setRatingCount(hotel.getRatingCount() + 1);
             hotel.setTotalRating(hotel.getTotalRating() + dto.getValue());
 
@@ -54,7 +54,7 @@ public class RatingService {
     }
 
     public Rating respond(RespondDTO dto) {
-        Rating rating = ratingDAO.getByUniqueAttribute(dto.getRatingId());
+        Rating rating = ratingDAO.getById(dto.getRatingId());
 
         RatingResponse response = new RatingResponse();
         response.setContent(dto.getContent());

@@ -42,7 +42,7 @@ public class MessageDAO implements DAO<Message, MessageFilter> {
             });
 
     @Override
-    public Message getByUniqueAttribute(String id) {
+    public Message getById(String id) {
         try {
             return messageCache.get(id);
         } catch (ExecutionException e) {

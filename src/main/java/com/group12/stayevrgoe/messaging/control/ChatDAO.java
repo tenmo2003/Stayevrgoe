@@ -53,7 +53,7 @@ public class ChatDAO implements DAO<Chat, ChatFilter> {
 
 
     @Override
-    public Chat getByUniqueAttribute(String id) {
+    public Chat getById(String id) {
         return chatCache.getIfPresent(id);
     }
 
@@ -104,9 +104,9 @@ public class ChatDAO implements DAO<Chat, ChatFilter> {
     public RichChatDTO getRichChat(Chat chat) {
         RichChatDTO richChatDTO = new RichChatDTO();
         richChatDTO.setId(chat.getId());
-        richChatDTO.setCustomer(userDAO.getByUniqueAttribute(chat.getCustomerId()));
-        richChatDTO.setHotel(hotelDAO.getByUniqueAttribute(chat.getHotelId()));
-        richChatDTO.setLastMessage(messageDAO.getByUniqueAttribute(chat.getLastMessageId()));
+        richChatDTO.setCustomer(userDAO.getById(chat.getCustomerId()));
+        richChatDTO.setHotel(hotelDAO.getById(chat.getHotelId()));
+        richChatDTO.setLastMessage(messageDAO.getById(chat.getLastMessageId()));
         return richChatDTO;
     }
 }

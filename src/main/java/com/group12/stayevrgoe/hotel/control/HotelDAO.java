@@ -41,7 +41,7 @@ public class HotelDAO implements DAO<Hotel, HotelFilter> {
             });
 
     @Override
-    public Hotel getByUniqueAttribute(String id) {
+    public Hotel getById(String id) {
         try {
             return hotelCache.get(id);
         } catch (ExecutionException e) {

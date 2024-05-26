@@ -33,11 +33,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(String id) {
-        return userDAO.getByUniqueAttribute(id);
+        return userDAO.getById(id);
     }
 
     public UserDetails loadUserById(String id) throws UsernameNotFoundException {
-        User user = userDAO.getByUniqueAttribute(id);
+        User user = userDAO.getById(id);
         return new MyUserDetails(id, user.getPassword(), new ArrayList<>(), user);
     }
 

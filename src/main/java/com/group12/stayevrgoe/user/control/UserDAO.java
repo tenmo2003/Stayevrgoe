@@ -40,7 +40,7 @@ public class UserDAO implements DAO<User, UserFilter> {
             });
 
     @Override
-    public User getByUniqueAttribute(String id) {
+    public User getById(String id) {
         try {
             return userCache.get(id);
         } catch (ExecutionException e) {

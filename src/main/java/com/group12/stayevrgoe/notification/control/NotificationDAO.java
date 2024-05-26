@@ -40,7 +40,7 @@ public class NotificationDAO implements DAO<Notification, NotificationFilter> {
             });
 
     @Override
-    public Notification getByUniqueAttribute(String id) {
+    public Notification getById(String id) {
         try {
             return notificationCache.get(id);
         } catch (ExecutionException e) {

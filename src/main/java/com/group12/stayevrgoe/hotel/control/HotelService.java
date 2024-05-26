@@ -4,9 +4,9 @@ import com.group12.stayevrgoe.hotel.entity.*;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import com.group12.stayevrgoe.shared.utils.ImgurUtils;
+import com.group12.stayevrgoe.user.control.BookingHistoryDAO;
 import com.group12.stayevrgoe.user.control.UserDAO;
 import com.group12.stayevrgoe.user.entity.BookingHistory;
-import com.group12.stayevrgoe.user.control.BookingHistoryDAO;
 import com.group12.stayevrgoe.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.Interval;
@@ -31,7 +31,7 @@ public class HotelService {
     }
 
     public BookingHistory bookHotelRoom(HotelRoomBookDTO dto) {
-        HotelRoom hotelRoom = hotelRoomDAO.getByUniqueAttribute(dto.getRoomId());
+        HotelRoom hotelRoom = hotelRoomDAO.getById(dto.getRoomId());
         if (!isRoomAvailableInDateRange(hotelRoom, dto.getFrom(), dto.getTo())) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Room is not available in date range");
         }
@@ -54,9 +54,9 @@ public class HotelService {
     }
 
     public void cancelBooking(String bookingId) {
-        BookingHistory bookingHistory = bookingHistoryDAO.getByUniqueAttribute(bookingId);
+        BookingHistory bookingHistory = bookingHistoryDAO.getById(bookingId);
 
-        HotelRoom hotelRoom = hotelRoomDAO.getByUniqueAttribute(bookingHistory.getHotelRoomId());
+        HotelRoom hotelRoom = hotelRoomDAO.getById(bookingHistory.getHotelRoomId());
         for (int i = 0; i < hotelRoom.getCurrentBookings().size(); i++) {
             if (hotelRoom.getCurrentBookings().get(i).getBookHistoryId().equals(bookingId)) {
                 hotelRoom.getCurrentBookings().remove(i);
@@ -94,7 +94,7 @@ public class HotelService {
     }
 
     public void approveHotel(String id) {
-        Hotel hotel = hotelDAO.getByUniqueAttribute(id);
+        Hotel hotel = hotelDAO.getById(id);
         hotel.setListed(true);
         hotelDAO.save(hotel);
     }
@@ -123,7 +123,7 @@ public class HotelService {
     }
 
     public void editHotelRoomInfo(HotelRoomEditDTO dto) {
-        HotelRoom room = hotelRoomDAO.getByUniqueAttribute(dto.getId());
+        HotelRoom room = hotelRoomDAO.getById(dto.getId());
         room.setDescription(dto.getDescription());
         room.setFacilities(dto.getFacilities());
         room.setPriceInUSD(dto.getPriceInUSD());
@@ -137,7 +137,7 @@ public class HotelService {
     }
 
     private void updateHotelPriceRange(String hotelId, float price) {
-        Hotel hotel = hotelDAO.getByUniqueAttribute(hotelId);
+        Hotel hotel = hotelDAO.getById(hotelId);
         hotel.setMinPriceInUSD(Math.min(hotel.getMinPriceInUSD(), price));
         hotel.setMaxPriceInUSD(Math.max(hotel.getMaxPriceInUSD(), price));
         hotelDAO.save(hotel);
@@ -153,4 +153,11 @@ public class HotelService {
         return true;
     }
 
+    public Hotel getHotelById(String id) {
+        return hotelDAO.getById(id);
+    }
+
+    public HotelRoom getHotelRoomById(String id) {
+        return hotelRoomDAO.getById(id);
+    }
 }

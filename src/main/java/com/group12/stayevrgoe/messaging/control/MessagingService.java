@@ -27,7 +27,7 @@ public class MessagingService {
 
         message = messageDAO.save(message);
 
-        Chat chat = chatDAO.getByUniqueAttribute(dto.getChatId());
+        Chat chat = chatDAO.getById(dto.getChatId());
         chat.setLastMessageId(message.getId());
 
         chatDAO.save(chat);
