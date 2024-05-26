@@ -37,8 +37,14 @@ public class HotelController {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.getHotelById(id));
     }
 
+    @PatchMapping("/hotel")
+    public ApiResponse updateHotelInfo(@RequestBody EditHotelDTO dto) {
+        hotelService.editHotelInfo(dto);
+        return new ApiResponse(HttpStatus.OK, "Updated successfully");
+    }
+
     @PostMapping("/hotel/book")
-    public ApiResponse bookHotelRoom(@RequestBody HotelRoomBookDTO dto) {
+    public ApiResponse bookHotelRoom(@RequestBody BookHotelRoomDTO dto) {
         return new ApiResponse(HttpStatus.OK, "OK", hotelService.bookHotelRoom(dto));
     }
 
@@ -50,7 +56,7 @@ public class HotelController {
 
 
     @PostMapping("/hotel/register")
-    public ApiResponse registerNewHotel(@ModelAttribute HotelRegisterDTO dto) {
+    public ApiResponse registerNewHotel(@ModelAttribute RegisterHotelDTO dto) {
         hotelService.registerNewHotel(dto);
         return new ApiResponse(HttpStatus.OK, "Registered successfully");
     }
@@ -86,12 +92,12 @@ public class HotelController {
     }
 
     @PostMapping("/hotel/room")
-    public ApiResponse editHotelRoomInfo(@ModelAttribute HotelRoomAddDTO dto) {
+    public ApiResponse editHotelRoomInfo(@ModelAttribute AddHotelRoomDTO dto) {
         return new ApiResponse(HttpStatus.OK, "Updated successfully", hotelService.addNewHotelRoom(dto));
     }
 
     @PatchMapping("/hotel/room")
-    public ApiResponse updateHotelPriceRange(@RequestBody HotelRoomEditDTO dto) {
+    public ApiResponse updateHotelInfo(@RequestBody EditHotelRoomDTO dto) {
         hotelService.editHotelRoomInfo(dto);
         return new ApiResponse(HttpStatus.OK, "Updated successfully");
     }

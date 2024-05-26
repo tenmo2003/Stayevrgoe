@@ -3,7 +3,7 @@ package com.group12.stayevrgoe.rating.control;
 import com.group12.stayevrgoe.hotel.control.HotelDAO;
 import com.group12.stayevrgoe.hotel.entity.Hotel;
 import com.group12.stayevrgoe.hotel.entity.HotelRoom;
-import com.group12.stayevrgoe.hotel.entity.HotelRoomDAO;
+import com.group12.stayevrgoe.hotel.control.HotelRoomDAO;
 import com.group12.stayevrgoe.rating.entity.*;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;

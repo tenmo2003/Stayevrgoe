@@ -30,7 +30,7 @@ public class HotelService {
         return hotelDAO.get(filter, pageable);
     }
 
-    public BookingHistory bookHotelRoom(HotelRoomBookDTO dto) {
+    public BookingHistory bookHotelRoom(BookHotelRoomDTO dto) {
         HotelRoom hotelRoom = hotelRoomDAO.getById(dto.getRoomId());
         if (!isRoomAvailableInDateRange(hotelRoom, dto.getFrom(), dto.getTo())) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Room is not available in date range");
@@ -72,7 +72,7 @@ public class HotelService {
         return hotelRoomDAO.get(filter, pageable);
     }
 
-    public void registerNewHotel(HotelRegisterDTO dto) {
+    public void registerNewHotel(RegisterHotelDTO dto) {
         User user = AuthenticationUtils.getCurrentUser();
 
         Hotel newHotel = Hotel.builder()
@@ -103,7 +103,7 @@ public class HotelService {
         hotelDAO.delete(id);
     }
 
-    public HotelRoom addNewHotelRoom(HotelRoomAddDTO dto) {
+    public HotelRoom addNewHotelRoom(AddHotelRoomDTO dto) {
         HotelRoom room = HotelRoom.builder()
                 .hotelId(dto.getHotelId())
                 .description(dto.getDescription())
@@ -122,7 +122,16 @@ public class HotelService {
         return hotelRoomDAO.save(room);
     }
 
-    public void editHotelRoomInfo(HotelRoomEditDTO dto) {
+    public void editHotelInfo(EditHotelDTO dto) {
+        Hotel hotel = hotelDAO.getById(dto.getId());
+        hotel.setDescription(dto.getDescription());
+        hotel.setLocation(dto.getLocation());
+        hotel.setName(dto.getName());
+        hotel.setFacilities(dto.getFacilities());
+        hotelDAO.save(hotel);
+    }
+
+    public void editHotelRoomInfo(EditHotelRoomDTO dto) {
         HotelRoom room = hotelRoomDAO.getById(dto.getId());
         room.setDescription(dto.getDescription());
         room.setFacilities(dto.getFacilities());
@@ -136,12 +145,21 @@ public class HotelService {
         hotelRoomDAO.delete(id);
     }
 
+    public Hotel getHotelById(String id) {
+        return hotelDAO.getById(id);
+    }
+
+    public HotelRoom getHotelRoomById(String id) {
+        return hotelRoomDAO.getById(id);
+    }
+
     private void updateHotelPriceRange(String hotelId, float price) {
         Hotel hotel = hotelDAO.getById(hotelId);
         hotel.setMinPriceInUSD(Math.min(hotel.getMinPriceInUSD(), price));
         hotel.setMaxPriceInUSD(Math.max(hotel.getMaxPriceInUSD(), price));
         hotelDAO.save(hotel);
     }
+
     private boolean isRoomAvailableInDateRange(HotelRoom room, Date from, Date to) {
         Interval requestedInterval = new Interval(from.getTime(), to.getTime());
         for (HotelRoomBooking booking : room.getCurrentBookings()) {
@@ -151,13 +169,5 @@ public class HotelService {
             }
         }
         return true;
-    }
-
-    public Hotel getHotelById(String id) {
-        return hotelDAO.getById(id);
-    }
-
-    public HotelRoom getHotelRoomById(String id) {
-        return hotelRoomDAO.getById(id);
     }
 }

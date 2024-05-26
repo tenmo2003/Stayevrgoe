@@ -1,10 +1,7 @@
 package com.group12.stayevrgoe.user.control;
 
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
-import com.group12.stayevrgoe.user.entity.BookingHistoryFilter;
-import com.group12.stayevrgoe.user.entity.MyUserDetails;
-import com.group12.stayevrgoe.user.entity.RichBookingHistoryDTO;
-import com.group12.stayevrgoe.user.entity.User;
+import com.group12.stayevrgoe.user.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,5 +41,13 @@ public class UserService implements UserDetailsService {
     public List<RichBookingHistoryDTO> getBookingHistories(BookingHistoryFilter filter, Pageable pageable) {
         filter.setUserId(AuthenticationUtils.getCurrentUser().getId());
         return bookingHistoryDAO.getRichBookingHistories(filter, pageable);
+    }
+
+    public void editUserInfo(EditUserInfoDTO dto) {
+        User user = userDAO.getById(AuthenticationUtils.getCurrentUser().getId());
+        user.setEmail(dto.getEmail());
+        user.setFullName(dto.getFullName());
+        user.setPhoneNumber(dto.getPhoneNumber());
+        userDAO.save(user);
     }
 }

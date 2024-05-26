@@ -8,7 +8,7 @@ import java.util.EnumSet;
  * @author anhvn
  */
 @Data
-public class HotelRoomEditDTO {
+public class EditHotelRoomDTO {
     private String id;
     private String description;
     private EnumSet<HotelRoomFacility> facilities;

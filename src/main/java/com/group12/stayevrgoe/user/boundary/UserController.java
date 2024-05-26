@@ -4,15 +4,13 @@ import com.group12.stayevrgoe.shared.network.ApiResponse;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import com.group12.stayevrgoe.user.control.UserService;
 import com.group12.stayevrgoe.user.entity.BookingHistoryFilter;
+import com.group12.stayevrgoe.user.entity.EditUserInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -41,5 +39,16 @@ public class UserController {
     @GetMapping("/users/me")
     public ApiResponse getPersonalInformation() {
         return new ApiResponse(HttpStatus.OK, "OK", AuthenticationUtils.getCurrentUser());
+    }
+
+    @GetMapping("/users/{id}")
+    public ApiResponse getUserById(@PathVariable String id) {
+        return new ApiResponse(HttpStatus.OK, "OK", userService.getUserById(id));
+    }
+
+    @PatchMapping("/users/me")
+    public ApiResponse editUserInfo(@RequestBody EditUserInfoDTO dto) {
+        userService.editUserInfo(dto);
+        return new ApiResponse(HttpStatus.OK, "OK");
     }
 }

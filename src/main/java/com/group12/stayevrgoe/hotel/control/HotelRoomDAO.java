@@ -1,8 +1,10 @@
-package com.group12.stayevrgoe.hotel.entity;
+package com.group12.stayevrgoe.hotel.control;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.group12.stayevrgoe.hotel.entity.HotelRoom;
+import com.group12.stayevrgoe.hotel.entity.HotelRoomFilter;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.interfaces.DAO;
 import com.group12.stayevrgoe.shared.utils.ThreadPoolUtils;
