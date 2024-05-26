@@ -4,6 +4,7 @@ import com.group12.stayevrgoe.hotel.entity.*;
 import com.group12.stayevrgoe.shared.exceptions.BusinessException;
 import com.group12.stayevrgoe.shared.utils.AuthenticationUtils;
 import com.group12.stayevrgoe.shared.utils.ImgurUtils;
+import com.group12.stayevrgoe.user.control.UserDAO;
 import com.group12.stayevrgoe.user.entity.BookingHistory;
 import com.group12.stayevrgoe.user.control.BookingHistoryDAO;
 import com.group12.stayevrgoe.user.entity.User;
@@ -23,6 +24,7 @@ public class HotelService {
     private final HotelDAO hotelDAO;
     private final HotelRoomDAO hotelRoomDAO;
     private final BookingHistoryDAO bookingHistoryDAO;
+    private final UserDAO userDAO;
 
     public List<Hotel> getHotels(HotelFilter filter, Pageable pageable) {
         return hotelDAO.get(filter, pageable);
@@ -87,6 +89,8 @@ public class HotelService {
 
         newHotel = hotelDAO.save(newHotel);
         user.setWorkingHotelId(newHotel.getId());
+
+        userDAO.save(user);
     }
 
     public void approveHotel(String id) {
